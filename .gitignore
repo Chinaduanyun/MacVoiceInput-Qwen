@@ -1,0 +1,16 @@
+# Build
+.build/
+*.build/
+
+# App bundle (generated)
+*.app/
+
+# macOS
+.DS_Store
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+
+# Temporary files
+*.tmp
+*.temp
