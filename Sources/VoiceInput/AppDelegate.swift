@@ -14,11 +14,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: "Voice Input")
+            button.image = NSImage(systemSymbolName: "flame.fill", accessibilityDescription: "Voice Input")
         }
 
         let menu = NSMenu()
-        let settingsItem = NSMenuItem(title: "Qwen-Omni Settings...", action: #selector(openSettings), keyEquivalent: ",")
+        let settingsItem = NSMenuItem(title: "Settings...", action: #selector(openSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
         menu.addItem(NSMenuItem.separator())
@@ -51,10 +51,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button else { return }
         if recording {
             let config = NSImage.SymbolConfiguration(paletteColors: [.systemOrange])
-            button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: "Recording")?
+            button.image = NSImage(systemSymbolName: "flame.fill", accessibilityDescription: "Recording")?
                 .withSymbolConfiguration(config)
         } else {
-            button.image = NSImage(systemSymbolName: "mic.fill", accessibilityDescription: "Voice Input")
+            button.image = NSImage(systemSymbolName: "flame.fill", accessibilityDescription: "Voice Input")
         }
     }
 

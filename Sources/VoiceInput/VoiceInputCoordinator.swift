@@ -12,6 +12,7 @@ class VoiceInputCoordinator: ObservableObject {
     private var floatingPanelController: FloatingWavePanelController?
 
     private var isRecording = false
+    private var hotkeyObserver: NSObjectProtocol?
 
     private init() {
         NSLog("[Coordinator] Initializing...")
@@ -23,7 +24,8 @@ class VoiceInputCoordinator: ObservableObject {
         NSLog("[Coordinator] Creating WebSocketManager...")
         webSocketManager = WebSocketManager()
         NSLog("[Coordinator] Creating FnKeyMonitor...")
-        fnKeyMonitor = FnKeyMonitor()
+        let hotkey = AppStateManager.shared.selectedHotkey
+        fnKeyMonitor = FnKeyMonitor(hotkeyType: hotkey)
         NSLog("[Coordinator] Creating TextInjector...")
         textInjector = TextInjector()
         NSLog("[Coordinator] Creating FloatingPanelController...")
@@ -36,6 +38,16 @@ class VoiceInputCoordinator: ObservableObject {
         NSLog("[Coordinator] Starting FnKeyMonitor...")
         fnKeyMonitor?.startMonitoring()
         NSLog("[Coordinator] FnKeyMonitor started")
+
+        hotkeyObserver = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("HotkeyChanged"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            let newKey = AppStateManager.shared.selectedHotkey
+            NSLog("[Coordinator] Hotkey changed to \(newKey.displayName), rebuilding event tap...")
+            self?.fnKeyMonitor?.updateMonitoredKey(newKey)
+        }
     }
 
     func startRecording() {

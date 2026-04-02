@@ -14,9 +14,11 @@ class AppStateManager: ObservableObject {
     @Published var selectedLanguage: Language = .simplifiedChinese
     @Published var transcriptText: String = ""
     @Published var currentRMS: Float = 0
+    @Published var selectedHotkey: HotkeyType = .fn
 
     private init() {
         loadLanguagePreference()
+        loadHotkeyPreference()
     }
 
     private func loadLanguagePreference() {
@@ -26,9 +28,22 @@ class AppStateManager: ObservableObject {
         }
     }
 
+    private func loadHotkeyPreference() {
+        if let savedRaw = UserDefaults.standard.string(forKey: "selectedHotkey"),
+           let hotkey = HotkeyType(rawValue: savedRaw) {
+            selectedHotkey = hotkey
+        }
+    }
+
     func setLanguage(_ language: Language) {
         selectedLanguage = language
         UserDefaults.standard.set(language.code, forKey: "selectedLanguage")
+    }
+
+    func setHotkey(_ hotkey: HotkeyType) {
+        selectedHotkey = hotkey
+        UserDefaults.standard.set(hotkey.rawValue, forKey: "selectedHotkey")
+        NotificationCenter.default.post(name: NSNotification.Name("HotkeyChanged"), object: nil)
     }
 
     func resetTranscript() {

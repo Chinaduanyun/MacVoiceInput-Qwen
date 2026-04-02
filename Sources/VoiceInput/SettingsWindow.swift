@@ -26,6 +26,7 @@ class SettingsWindow: NSWindow {
 class SettingsViewModel: ObservableObject {
     @Published var apiKey: String = ""
     @Published var model: String = ""
+    @Published var selectedHotkey: HotkeyType = .fn
     @Published var statusMessage: String = ""
     @Published var statusColor: NSColor = .secondaryLabelColor
 
@@ -36,11 +37,13 @@ class SettingsViewModel: ObservableObject {
     func loadSettings() {
         apiKey = UserDefaults.standard.string(forKey: "dashscopeApiKey") ?? ""
         model = UserDefaults.standard.string(forKey: "modelName") ?? "qwen3.5-omni-plus-realtime"
+        selectedHotkey = AppStateManager.shared.selectedHotkey
     }
 
     func saveSettings() {
         UserDefaults.standard.set(apiKey, forKey: "dashscopeApiKey")
         UserDefaults.standard.set(model, forKey: "modelName")
+        AppStateManager.shared.setHotkey(selectedHotkey)
 
         statusMessage = "Settings saved successfully!"
         statusColor = .systemGreen
@@ -115,6 +118,19 @@ struct SettingsView: View {
                 TextField("qwen3.5-omni-plus-realtime", text: $viewModel.model)
                     .textFieldStyle(.roundedBorder)
                     .frame(height: 24)
+            }
+
+            // Trigger Key section
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Trigger Key:")
+                    .font(.system(size: 13, weight: .medium))
+                Picker("", selection: $viewModel.selectedHotkey) {
+                    ForEach(HotkeyType.allCases, id: \.self) { key in
+                        Text(key.displayName).tag(key)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.segmented)
             }
 
             // Buttons
